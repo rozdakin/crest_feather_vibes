@@ -1,4 +1,2 @@
 # crest_feather_vibes
-Vibrational properties of crest plumage
-
-The goal is to see how the vibrational properties of feather crests as potential mechanosensory structures correspond to avian social displays.
+This project investigates the potential sensory function of feather crests. The goal is to understand how the vibrational properties of feather crests correspond to avian social displays.
