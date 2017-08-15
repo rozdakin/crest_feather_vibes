@@ -103,9 +103,9 @@ axis(2, at=c(20,25,30))
 segments(x0=0.75,x1=1.25, y0=((predict(mod.f, newdata=data.frame(orientation=c('standard'), sex='female',width=median(morph$width), height=median(morph$height), top_area=median(morph$top_area), nfeathers=median(morph$nfeathers, na.rm=T)), level=0)) + (predict(mod.f, newdata=data.frame(orientation=c('sideways'), sex='female',width=median(morph$width), height=median(morph$height), top_area=median(morph$top_area), nfeathers=median(morph$nfeathers, na.rm=T)), level=0)))/2)
 segments(x0=1.75,x1=2.25, y0=((predict(mod.f, newdata=data.frame(orientation=c('standard'), sex='male',width=median(morph$width), height=median(morph$height), top_area=median(morph$top_area), nfeathers=median(morph$nfeathers, na.rm=T)), level=0)) + (predict(mod.f, newdata=data.frame(orientation=c('sideways'), sex='male',width=median(morph$width), height=median(morph$height), top_area=median(morph$top_area), nfeathers=median(morph$nfeathers, na.rm=T)), level=0)))/2)
 
-polygon(x=c(0,5,5,0), y=c(22.2,22.2,28.5,28.5), col=rgb(0,0,0,0.2), border=NA)
-segments(x0=c(0), x1=c(5), y0=c(25.6), y1=c(25.6), lty=3, col=rgb(0,0,1))
-segments(x0=c(0), x1=c(5), y0=c(26.1), y1=c(26.1), lty=3, col=rgb(1,0,0))
+polygon(x=c(0,5,5,0), y=c(22.2,22.2,28.5,28.5), col=rgb(0,0,0,0.2), border=NA) # range of frequencies recorded over all shaking displays 
+segments(x0=c(0), x1=c(5), y0=c(25.6), y1=c(25.6), lty=3, col=rgb(0,0,1)) # peacock shaking display shaking avg
+segments(x0=c(0), x1=c(5), y0=c(26.1), y1=c(26.1), lty=3, col=rgb(1,0,0)) # peahen shaking display avg
 
 plot(f_res ~ jitter(width,2), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='f (Hz)', xlab='width (cm)', ylim=c(19,33), cex=0.5, yaxt='n', xaxt='n')
 axis(2, at=c(20,25,30))
