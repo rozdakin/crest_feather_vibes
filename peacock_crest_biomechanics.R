@@ -1,5 +1,5 @@
 
-# last edited 15-08-17
+# last edited 08-09-17
 
 # load packages
 library(nlme) # 1.1-12
@@ -68,8 +68,8 @@ par(mfrow=c(3,2), bty='l', mar=c(4,4,0.25,0.25), mgp=c(1.5,0.5,0)); visreg(mod.q
 dev.off()
 
 r.squaredGLMM(mod.q1) # 49% var explained in Q by fixed effects, fairly high
-mod.q.rep <- lme(q ~ 1, random=~1|crest_number, data=subset(vib, whole_single=='whole'), na.action=na.omit)
-r.squaredGLMM(mod.q.rep) # 50% measurement repeatability
+vcomp <- as.numeric(VarCorr(mod.q1)[,1])
+vcomp[1]/(vcomp[1]+vcomp[2]) # 47% measurement repeatability
 
 # resonant freq.
 mod.f <- lme(f_res ~ orientation + sex + sweep + run, random=~1|crest_number, data=subset(vib, whole_single=='whole'), na.action=na.omit)
@@ -93,9 +93,9 @@ dev.off()
 # higher in standard orientation, larger top area, tend to have lower res. freq
 
 r.squaredGLMM(mod.f1) # 28% ver explained in f res. by fixed effects
-mod.f.rep <- lme(f_res ~ 1, random=~1|crest_number, data=subset(vib, whole_single=='whole'), na.action=na.omit)
-r.squaredGLMM(mod.f.rep) # 82% measurement repeatability, very high
-
+# repeatability
+vcomp <- as.numeric(VarCorr(mod.f1)[,1])
+vcomp[1]/(vcomp[1]+vcomp[2]) # 94% repeatability, very high
 
 # plot data and some model fits for both fr and Q, for Figure 2 of manuscript
 # add:
