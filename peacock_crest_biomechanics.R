@@ -203,9 +203,21 @@ legend('topright', lty=c(3,1), legend=c('data','L. fit'), bty='n', cex=0.75)
 text(x=spec[spec$fit==max(spec$fit),]$freq, y=spec[spec$fit==max(spec$fit),]$fit, pos=4, 'fr = 25.5', cex=0.75)
 dev.off()
 
+# plot example audio results
+audio <- read.csv('data/Audio_file_sample_data_-_Sheet1.csv')[,1:2] # crest 13, 25Hz, 30 cm distance
+names(audio) <- c('freq','power')
+audiofit <- read.csv('data/Audio_file_sample_data_-_Sheet1.csv')[,4:5] # fit
+names(audiofit) <- c('freq','fit')
 
-read.csv('data/Vortex_response_figure_-_Sheet1.csv')
-read.csv('data/Audio_file_sample_data_-_Sheet1.csv')
+png(file='./figures/fig3_audio_result.png', width=4, height=4, res=300, units='in', bg='white')
+par(bty='l', las=1, mgp=c(3,0.5,0))
+plot(power ~ freq, data=audio, type='l', ylab='Power as MSA (mm2)', xlab='Frequency (Hz)', lty=3, xlim=c(0,110))
+points(fit ~ freq, data=audiofit, type='l')
+legend('topright', lty=c(3,1), legend=c('data','L. fit'), bty='n', cex=0.75)
+dev.off()
+
+
+head.csv('data/Vortex_response_figure_-_Sheet1.csv')
 
 
 
