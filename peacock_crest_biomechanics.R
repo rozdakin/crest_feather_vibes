@@ -71,6 +71,9 @@ r.squaredGLMM(mod.q1) # 49% var explained in Q by fixed effects, fairly high
 vcomp <- as.numeric(VarCorr(mod.q1)[,1])
 vcomp[1]/(vcomp[1]+vcomp[2]) # 47% measurement repeatability
 
+vib <- group_by(vib, crest_number, sex_col, orientation)
+summarize(group_by(summarize(subset(vib, whole_single=='whole'), q=mean(q)), sex_col, orientation), mean(q))
+
 # resonant freq.
 mod.f <- lme(f_res ~ orientation + sex + sweep + run, random=~1|crest_number, data=subset(vib, whole_single=='whole'), na.action=na.omit)
 summary(mod.f) # first we check run and sweep. both ns therefore eliminate. residuals indicate that variance differs among the crests, so we furthermore use a model with different variances:
