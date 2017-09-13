@@ -1,11 +1,12 @@
 
-# last edited 08-09-17
+# last edited 09-13-17
 
 # load packages
 library(nlme) # 1.1-12
 library(visreg) # 2.2-2
 library(MuMIn) # 1.15.6
 library(lme4) # 3.1-131
+library(dplyr) # 0.5.0
 
 (vib <- read.csv('./data/crest_vibration_data2.csv'))
 (morph <- read.csv('./data/crest_samples.csv'))
@@ -95,7 +96,7 @@ par(mfrow=c(3,2), bty='l', mar=c(4,4,0.25,0.25), mgp=c(1.5,0.5,0)); visreg(mod.f
 dev.off()
 # higher in standard orientation, larger top area, tend to have lower res. freq
 
-r.squaredGLMM(mod.f1) # 28% ver explained in f res. by fixed effects
+r.squaredGLMM(mod.f1) # 28% var explained in f res. by fixed effects
 # repeatability
 vcomp <- as.numeric(VarCorr(mod.f1)[,1])
 vcomp[1]/(vcomp[1]+vcomp[2]) # 94% repeatability, very high
@@ -189,4 +190,23 @@ axis(1, at=c(1,2), labels=c('female','male'))
 segments(x0=1:2, x1=c(1:2), y0=c(6.36,7.43), y1=c(6.98,8.11))
 segments(x0=c(0.5,1.5), x1=c(1,2), y0=c(mean(subset(morph,sex=='a_female')$width), mean(subset(morph,sex=='b_male')$width)))
 dev.off()
+
+# plot example vibrational spectrum and fit
+spec <- read.csv('data/Crest_transfer_function_plot_-_Sheet1.csv')[,1:3] # crest 1
+names(spec) <- c('freq', 'transferfcn', 'fit')
+
+png(file='./figures/fig2_sample_spectrum.png', width=4, height=4, res=300, units='in', bg='white')
+par(bty='l', las=1)
+plot(transferfcn ~ freq, spec, type='l', xlab='Frequency (Hz)', ylab='Transfer function (arb. units)', lty=3, ylim=c(0,8))
+points(fit ~ freq, spec, type='l')
+legend('topright', lty=c(3,1), legend=c('data','L. fit'), bty='n', cex=0.75)
+text(x=spec[spec$fit==max(spec$fit),]$freq, y=spec[spec$fit==max(spec$fit),]$fit, pos=4, 'fr = 25.5', cex=0.75)
+dev.off()
+
+
+read.csv('data/Vortex_response_figure_-_Sheet1.csv')
+read.csv('data/Audio_file_sample_data_-_Sheet1.csv')
+
+
+
 
