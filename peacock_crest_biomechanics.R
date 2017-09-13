@@ -216,9 +216,16 @@ points(fit ~ freq, data=audiofit, type='l')
 legend('topright', lty=c(3,1), legend=c('data','L. fit'), bty='n', cex=0.75)
 dev.off()
 
+# plot vortex gun results
+vortex <- read.csv('data/Vortex_response_figure_-_Sheet1.csv')[,1:2]
+names(vortex) <- c('t','disp')
+vortexfit <- read.csv('data/Vortex_response_figure_-_Sheet1.csv')[,4:5]
+names(vortexfit) <- c('t','fit')
 
-head.csv('data/Vortex_response_figure_-_Sheet1.csv')
-
-
-
+png(file='./figures/fig5_vortex.png', width=4, height=4, res=300, units='in', bg='white')
+par(bty='l', las=1, mgp=c(3,0.5,0))
+plot(disp ~ t, data=vortex, type='l', ylab='Displacement (mm)', xlab='Time (s)', lty=3)
+points(fit/5.9 ~ t, data=vortexfit, type='l')
+legend('topright', lty=c(3,1), legend=c('data','fit'), bty='n', cex=0.75)
+dev.off()
 
