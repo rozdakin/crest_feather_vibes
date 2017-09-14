@@ -237,5 +237,24 @@ legend('bottomleft', pch=c(16,1), legend=c('fr','vortex response'), bty='n', cex
 dev.off()
 
 # plot vortex gun results
+mech <- read.csv('./data/mechanical_crest_properties.csv') # note the # of feathers here is sometimes less than in the morph dataset because of removal
+mech$color <- ifelse(mech$sex=='F','green','blue')
+mech$pch <- c(15,16,15,17,16,17)[factor(mech$crestID)]
+mech <- group_by(mech, sex, crestID)
+mechsumm <- summarize(group_by(summarize(mech, k=mean(k_Nmm)), sex), k=mean(k))
+
+png(file='./figures/fig6_mech.png', width=6, height=6, res=300, units='in', bg='white')
+par(mar=c(4,4,0.25,0.25), bty='l', las=1, mgp=c(2.5,0.5,0))
+layout(matrix(c(1,2,1,3,1,4), nrow=3, ncol=2, byrow=T))
+plot(k_Nmm ~ jitter(as.numeric(sex)), mech, col=color, pch=pch, xlim=c(0.5,2.5), xaxt='n', xlab='Sex', cex=1.25)
+segments(x0=c(0.75,1.75), x1=c(1.25,2.25), y0=mechsumm$k, lwd=2)
+axis(1, at=1:2, labels=c('Female','Male'))
+plot(k_Nmm ~ rachis_length_cm, mech, col=color, pch=pch, ylab='', yaxt='n', xaxt='n', cex=0.75)
+axis(2, at=c(0.002,0.006)); axis(1, at=c(4.2,5.4))
+plot(k_Nmm ~ number_feathers, mech, col=color, pch=pch, ylab='', yaxt='n', xaxt='n', cex=0.75)
+axis(2, at=c(0.002,0.006)); axis(1, at=c(20,28))
+plot(k_Nmm ~ area_cm2, mech, col=color, pch=pch, ylab='', yaxt='n', xaxt='n', cex=0.75)
+axis(2, at=c(0.002,0.006)); axis(1, at=c(5,9))
+dev.off()
 
 
