@@ -1,5 +1,5 @@
 
-# last edited 09-13-17
+# last edited 09-15-17
 
 # load packages
 library(nlme) # 1.1-12
@@ -64,7 +64,7 @@ summary(mod.q1)
 dev.new(); plot(mod.q1) # fine, no outliers
 dev.new(); hist(residuals(mod.q1)) # good
 
-png(file='./figures/Qmod_resid_plot.png', width=4, height=5, res=300, units='in', bg='white')
+png(file='../figures/Qmod_resid_plot.png', width=4, height=5, res=300, units='in', bg='white')
 par(mfrow=c(3,2), bty='l', mar=c(4,4,0.25,0.25), mgp=c(1.5,0.5,0)); visreg(mod.q1, cond=list(orientation='A_out-plane'), ylab='Q', ylim=c(3,9))
 dev.off()
 
@@ -91,7 +91,7 @@ summary(mod.f1)
 dev.new(); plot(mod.f1) # good
 dev.new(); hist(residuals(mod.f1)) # ok
 
-png(file='./figures/fmod_resid_plot.png', width=4, height=5, res=300, units='in', bg='white')
+png(file='../figures/fmod_resid_plot.png', width=4, height=5, res=300, units='in', bg='white')
 par(mfrow=c(3,2), bty='l', mar=c(4,4,0.25,0.25), mgp=c(1.5,0.5,0)); visreg(mod.f1, cond=list(orientation='A_out-plane'), ylab='f_res', ylim=c(19,33))
 dev.off()
 # higher in standard orientation, larger top area, tend to have lower res. freq
@@ -221,11 +221,18 @@ vortex <- read.csv('data/Vortex_response_figure_-_Sheet1.csv')[,1:2]
 names(vortex) <- c('t','disp')
 vortexfit <- read.csv('data/Vortex_response_figure_-_Sheet1.csv')[,4:5]
 names(vortexfit) <- c('t','fit')
+vortexall <- read.csv('data/vortex_results_natural_frequency.csv')
 
-png(file='./figures/fig5_vortex.png', width=4, height=4, res=300, units='in', bg='white')
-par(bty='l', las=1, mgp=c(3,0.5,0))
+png(file='./figures/fig5_vortex.png', width=8, height=4, res=300, units='in', bg='white')
+par(mfrow=c(1,2), mar=c(4,4,0.25,0.25), bty='l', las=1, mgp=c(2.5,0.5,0))
 plot(disp ~ t, data=vortex, type='l', ylab='Displacement (mm)', xlab='Time (s)', lty=3)
 points(fit/5.9 ~ t, data=vortexfit, type='l')
 legend('topright', lty=c(3,1), legend=c('data','fit'), bty='n', cex=0.75)
+plot(vortexall$f_res, pch=16, ylim=c(20,30), ylab='Frequency (Hz)', xlab='Crest', xaxt='n', xlim=c(0.9,3.5))
+segments(x0=1:3, y0=vortexall$res_lower, y1=vortexall$res_upper)
+points(vortexall$f_vortex_response ~c(1:3+0.25), pch=1)
+segments(x0=1:3+0.25, y0=vortexall$vortex_lower, y1=vortexall$vortex_upper)
+axis(1, at=1:3, labels=c('A','B','C'))
+legend('bottomleft', pch=c(16,1), legend=c('fr','vortex response'), bty='n', cex=0.75)
 dev.off()
 
