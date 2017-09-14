@@ -236,3 +236,6 @@ axis(1, at=1:3, labels=c('A','B','C'))
 legend('bottomleft', pch=c(16,1), legend=c('fr','vortex response'), bty='n', cex=0.75)
 dev.off()
 
+# plot vortex gun results
+
+
