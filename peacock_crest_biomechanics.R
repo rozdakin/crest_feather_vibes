@@ -236,12 +236,17 @@ axis(1, at=1:3, labels=c('A','B','C'))
 legend('bottomleft', pch=c(16,1), legend=c('fr','vortex response'), bty='n', cex=0.75)
 dev.off()
 
-# plot vortex gun results
+# plot mechanical properties results
 mech <- read.csv('./data/mechanical_crest_properties.csv') # note the # of feathers here is sometimes less than in the morph dataset because of removal
 mech$color <- ifelse(mech$sex=='F','green','blue')
 mech$pch <- c(15,16,15,17,16,17)[factor(mech$crestID)]
 mech <- group_by(mech, sex, crestID)
 mechsumm <- summarize(group_by(summarize(mech, k=mean(k_Nmm)), sex), k=mean(k))
+range(mech$k_Nmm)
+
+mechmod <- lme(k_Nmm ~ sex, random=~1|crestID, data=mech)
+summary(mechmod)
+as.numeric(VarCorr(mechmod)[,1])[1]/(as.numeric(VarCorr(mechmod)[,1])[1] + as.numeric(VarCorr(mechmod)[,1])[2])
 
 png(file='./figures/fig6_mech.png', width=6, height=6, res=300, units='in', bg='white')
 par(mar=c(4,4,0.25,0.25), bty='l', las=1, mgp=c(2.5,0.5,0))
