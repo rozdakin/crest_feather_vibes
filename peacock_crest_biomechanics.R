@@ -176,6 +176,8 @@ dev.off()
 # lengths: male 5.68 [5.52, 5.81] cm; female 5.69 [5.63, 5.75] cm.
 # widths: Male 7.77 [7.43, 8.11] cm; female 6.62 [6.36, 6.98] cm  
 morph$sex <- factor(ifelse(morph$color=='blue','b_male','a_female'))
+morph <- group_by(morph, sex)
+morphsumm <- summarize(morph, L=mean(height), L_SE=sd(height)/sqrt(n()), L_lower=L-1.96*L_SE, L_upper=L+1.96*L_SE, W=mean(width), W_SE=sd(width)/sqrt(n()), W_lower=W-1.96*W_SE, W_upper=W+1.96*W_SE)
 
 png(file='./figures/fig1_morph_compare.png', width=4, height=2, res=300, units='in', bg='white')
 par(mfrow=c(1,2), bty='l', las=1, mar=c(3,3,0.25,0.25), mgp=c(1.5,0.5,0), cex.axis=0.5, cex.lab=0.5, tck=-0.05, cex=0.5)
@@ -184,11 +186,15 @@ points(height ~ c(as.numeric(sex)-0.25), pch=1, col=as.numeric(sex)+2, data=morp
 axis(1, at=c(1,2), labels=c('female','male'))
 segments(x0=1:2, x1=c(1:2), y0=c(5.63,5.52), y1=c(5.75,5.81))
 segments(x0=c(0.5,1.5), x1=c(1,2), y0=c(mean(subset(morph,sex=='a_female')$height), mean(subset(morph,sex=='b_male')$height)))
+segments(x0=c(0.75,1.75), x1=c(0.75,1.75), y0=c(morphsumm$L_lower), y1=c(morphsumm$L_upper))
+segments(x0=c(0.95,1.95), x1=c(1.05,2.05), y0=c(5.69,5.68), y1=c(5.69,5.68))
 plot(c(6.62,7.77) ~ c(1,2), pch=16, ylim=c(3.25,8.25), xlim=c(0.5,2.5), ylab='width (cm)', xaxt='n', xlab='', col=c('green','blue'))
 points(width ~ c(as.numeric(sex)-0.25), pch=1, col=as.numeric(sex)+2, data=morph)
 axis(1, at=c(1,2), labels=c('female','male'))
 segments(x0=1:2, x1=c(1:2), y0=c(6.36,7.43), y1=c(6.98,8.11))
 segments(x0=c(0.5,1.5), x1=c(1,2), y0=c(mean(subset(morph,sex=='a_female')$width), mean(subset(morph,sex=='b_male')$width)))
+segments(x0=c(0.75,1.75), x1=c(0.75,1.75), y0=c(morphsumm$W_lower), y1=c(morphsumm$W_upper))
+segments(x0=c(0.95,1.95), x1=c(1.05,2.05), y0=c(6.62,7.77), y1=c(6.62,7.77))
 dev.off()
 
 # plot example vibrational spectrum and fit
