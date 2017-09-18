@@ -106,6 +106,11 @@ vcomp[1]/(vcomp[1]+vcomp[2]) # 94% repeatability, very high
 # male mean display freq = 25.6, range of bird means 23.9-27.1; range 22.2 to 28.2
 # female mean display freq = 26.1, range of bird means 25.2-27.1; range 25.2 to 28.5
 
+mean(vib$f_upper - vib$f_lower, na.rm=T) # the average span of error for f is 0.07 Hz, too small to plot
+vib$q_lower <- vib$f_lower/vib$del_upper
+vib$q_upper <- vib$f_upper/vib$del_lower
+mean(vib$q_upper - vib$q_lower, na.rm=T) # the average span of error for Q is 0.23
+
 png(file='./figures/fig2_vib_results.png', width=7, height=2, res=300, units='in', bg='white')
 
 par(mfrow=c(2, 6), bty='l', las=1, mar=c(3,3,0.25,0.25), mgp=c(1.5,0.5,0), cex.axis=0.5, cex.lab=0.5, tck=-0.05)
