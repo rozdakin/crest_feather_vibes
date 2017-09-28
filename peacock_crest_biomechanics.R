@@ -64,7 +64,6 @@ summary(mod.q1)
 dev.new(); plot(mod.q1) # fine, no outliers
 dev.new(); hist(residuals(mod.q1)) # good
 
-png(file='../figures/Qmod_resid_plot.png', width=4, height=5, res=300, units='in', bg='white')
 par(mfrow=c(3,2), bty='l', mar=c(4,4,0.25,0.25), mgp=c(1.5,0.5,0)); visreg(mod.q1, cond=list(orientation='A_out-plane'), ylab='Q', ylim=c(3,9))
 dev.off()
 
@@ -91,12 +90,10 @@ summary(mod.f1)
 dev.new(); plot(mod.f1) # good
 dev.new(); hist(residuals(mod.f1)) # ok
 
-png(file='../figures/fmod_resid_plot.png', width=4, height=5, res=300, units='in', bg='white')
-par(mfrow=c(3,2), bty='l', mar=c(4,4,0.25,0.25), mgp=c(1.5,0.5,0)); visreg(mod.f1, cond=list(orientation='A_out-plane'), ylab='f_res', ylim=c(19,33))
-dev.off()
 # higher in standard orientation, larger top area, tend to have lower res. freq
 
 r.squaredGLMM(mod.f1) # 28% var explained in f res. by fixed effects
+
 # repeatability
 vcomp <- as.numeric(VarCorr(mod.f1)[,1])
 vcomp[1]/(vcomp[1]+vcomp[2]) # 94% repeatability, very high
@@ -227,6 +224,9 @@ plot(power ~ freq, data=audio, type='l', ylab='Power as MSA (mm2)', xlab='Freque
 points(fit ~ freq, data=audiofit, type='l')
 legend('topright', lty=c(3,1), legend=c('data','L. fit'), bty='n', cex=0.75)
 dev.off()
+
+# plot wingflap experiment resuls
+flap <- read.csv('data/wingflap_power_spectrum.csv')
 
 # plot vortex gun results
 vortex <- read.csv('data/Vortex_response_figure_-_Sheet1.csv')[,1:2]
