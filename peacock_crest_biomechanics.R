@@ -227,6 +227,13 @@ dev.off()
 
 # plot wingflap experiment resuls
 flap <- read.csv('data/wingflap_power_spectrum.csv')
+head(flap)
+
+png(file='./figures/fig4_wingflap_result.png', width=4, height=4, res=300, units='in', bg='white')
+par(mfrow=c(1,1), bty='l', las=1, mgp=c(3,0.5,0))
+plot(FFTpower ~ frequency, type='l', flap, xlim=c(0,30), yaxt='n', ylim=c(0,0.000002), xlab='Frequency (Hz)', ylab='FFT spectral power (arb. units)')
+axis(2, at=c(0,0.000001,0.000002))
+dev.off()
 
 # plot vortex gun results
 vortex <- read.csv('data/Vortex_response_figure_-_Sheet1.csv')[,1:2]
