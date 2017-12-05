@@ -52,13 +52,13 @@ legend('bottomleft', col=1:3, legend=levels(factor(rh$type)), pch=16, bty='n', c
 rh$sample <- factor(rh$sample, levels=c('pre','peak','post'))
 rh$displaydateDOY <- as.numeric(substr(rh$date, 3,4)) + 59
 
-rh.mod <- lme(freq ~ sample + displaydateDOY + timeH + relhumid + trainL + traindate, random=~1|id, data=subset(rh, type='male'), na.action=na.omit, method='REML')
+rh.mod <- lme(freq ~ sample + displaydateDOY + timeH + relhumid + trainL + traindate, random=~1|id/boutID, data=subset(rh, type='male'), na.action=na.omit, method='REML')
 summary(rh.mod) # ns. relationship with relative humidity, accounting for date, time, and morphology
 plot(rh.mod)
 dev.off(); hist(residuals(rh.mod))
 par(mfrow=c(3,3), mar=c(4,4,0.1,0.1), mgp=c(2.5,1,0)); visreg(rh.mod)
 r.squaredGLMM(rh.mod)
-rh.mod2 <- lme(freq ~ sample + displaydateDOY + timeH + trainL + traindate, random=~1|id, data=subset(rh, type='male'), na.action=na.omit, method='REML') # remove humidity term
+rh.mod2 <- lme(freq ~ sample + displaydateDOY + timeH + trainL + traindate, random=~1|id/boutID, data=subset(rh, type='male'), na.action=na.omit, method='REML') # remove humidity term
 r.squaredGLMM(rh.mod2) # virtually no change in variance explained when it is removed
 
 
