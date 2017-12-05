@@ -1,5 +1,12 @@
 
+# last edited 12-05-17
 
+# load packages
+library(nlme) # 3.1-131
+library(visreg) # 2.2-2
+library(MuMIn) # 1.15.6
+
+# make sure folder data is working directory
 rh <- read.csv("traindisplaydataRH2.csv")
 head(rh)
 dim(rh);summary(rh)
@@ -24,7 +31,7 @@ for(i in 1:length(x)){
   if(mypercent < 0.5){
     next
   } else {
-    print(c(x[i], mypercent*100))
+    print(c(mypercent*100, x[i]))
     break
   }
 } # therefore, over 50% within 2.2ºC of lab
@@ -35,26 +42,21 @@ for(i in 1:length(x)){
   if(mypercent < 0.5){
     next
   } else {
-    print(c(x[i], mypercent*100))
+    print(c(mypercent*100, x[i]))
     break
   }
 } # over 50% within 13.8% of lab
-
 
 plot(freq ~ relhumid, rh, pch=16, cex=0.5, las=1, bty='l', col=type)
 legend('bottomleft', col=1:3, legend=levels(factor(rh$type)), pch=16, bty='n', cex=0.5)
 rh$sample <- factor(rh$sample, levels=c('pre','peak','post'))
 rh$displaydateDOY <- as.numeric(substr(rh$date, 3,4)) + 59
 
-library(nlme)
-library(visreg)
-library(MuMIn)
-
 rh.mod <- lme(freq ~ sample + displaydateDOY + timeH + relhumid + trainL + traindate, random=~1|id, data=subset(rh, type='male'), na.action=na.omit, method='REML')
 summary(rh.mod) # ns. relationship with relative humidity, accounting for date, time, and morphology
-par(mfrow=c(3,3), mar=c(4,4,0.1,0.1), mgp=c(2.5,1,0)); visreg(rh.mod)
 plot(rh.mod)
-hist(residuals(rh.mod))
+dev.off(); hist(residuals(rh.mod))
+par(mfrow=c(3,3), mar=c(4,4,0.1,0.1), mgp=c(2.5,1,0)); visreg(rh.mod)
 r.squaredGLMM(rh.mod)
 rh.mod2 <- lme(freq ~ sample + displaydateDOY + timeH + trainL + traindate, random=~1|id, data=subset(rh, type='male'), na.action=na.omit, method='REML') # remove humidity term
 r.squaredGLMM(rh.mod2) # virtually no change in variance explained when it is removed
