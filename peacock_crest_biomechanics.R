@@ -1,5 +1,5 @@
 
-# last edited 09-15-17
+# last edited 12-05-17
 
 # load packages
 library(nlme) # 1.1-12
@@ -25,7 +25,7 @@ head(morph); dim(morph)
 vib <- merge(vib, morph, by='crest_number'); dim(vib)
 vib$run <- as.numeric(vib$run)
 
-head(vib) # omit the 0-15 sweeps because why?
+head(vib) # omit the 0-15 sweeps
 vib <- subset(vib, exp!='0-15')
 
 # add unique identifier for single feathers
@@ -108,18 +108,25 @@ vib$q_lower <- vib$f_lower/vib$del_upper
 vib$q_upper <- vib$f_upper/vib$del_lower
 mean(vib$q_upper - vib$q_lower, na.rm=T) # the average span of error for Q is 0.23
 
+# add symbols to denote unique crests. there are 7 male and 8 female crests
+# add legend as well. use pch=1:8
+lookup <- data.frame(table(vib$crest_number, vib$sex))
+lookup <- lookup[lookup$Freq>0,-3]
+lookup$pch <- c(1:8,1:7)
+vib$pch <- lookup$pch[match(vib$crest_number, lookup$Var1)]
+
 png(file='./figures/fig2_vib_results.png', width=7, height=2, res=300, units='in', bg='white')
 
 par(mfrow=c(2, 6), bty='l', las=1, mar=c(3,3,0.25,0.25), mgp=c(1.5,0.5,0), cex.axis=0.5, cex.lab=0.5, tck=-0.05)
 
-plot(f_res ~ jitter(as.numeric(orientation), 0.5), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='f (Hz)', xlab='orientation', xaxt='n', xlim=c(0.5,2.5), ylim=c(19,33), cex=0.5, yaxt='n')
+plot(f_res ~ jitter(as.numeric(orientation), 0.5), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='f (Hz)', xlab='orientation', xaxt='n', xlim=c(0.5,2.5), ylim=c(19,33), cex=0.5, yaxt='n')
 axis(1, at=c(1,2), labels=c('standard','sideways'))
 axis(2, at=c(20,25,30))
 legend('topright', col=c('green','blue'), pch=16, legend=c('female','male'), bty='n', cex=0.5)
 segments(x0=0.75,x1=1.25, y0=mean(subset(vib, whole_single=='whole'&orientation=='A_out-plane')$f_res))
 segments(x0=1.75,x1=2.25, y0=mean(subset(vib, whole_single=='whole'&orientation=='B_in-plane')$f_res))
 
-plot(f_res ~ jitter(as.numeric(sex), 0.5), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='f (Hz)', xlab='sex', xaxt='n', xlim=c(0.5,2.5), ylim=c(19,33), cex=0.5, yaxt='n')
+plot(f_res ~ jitter(as.numeric(sex), 0.5), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='f (Hz)', xlab='sex', xaxt='n', xlim=c(0.5,2.5), ylim=c(19,33), cex=0.5, yaxt='n')
 axis(1, at=c(1,2), labels=c('female','male'))
 axis(2, at=c(20,25,30))
 segments(x0=0.75,x1=1.25, y0=mean(subset(vib, whole_single=='whole'&sex=='female')$f_res))
@@ -129,48 +136,54 @@ polygon(x=c(0,5,5,0), y=c(22.2,22.2,28.5,28.5), col=rgb(0,0,0,0.2), border=NA) #
 segments(x0=c(0), x1=c(5), y0=c(25.6), y1=c(25.6), lty=3, col=rgb(0,0,1)) # peacock shaking display shaking avg
 segments(x0=c(0), x1=c(5), y0=c(26.1), y1=c(26.1), lty=3, col=rgb(1,0,0)) # peahen shaking display avg
 
-plot(f_res ~ jitter(top_area, 3), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', xlab='top area (cm2)', ylab='f (Hz)', ylim=c(19,33), cex=0.5, yaxt='n', xaxt='n')
+plot(f_res ~ jitter(top_area, 3), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', xlab='top area (cm2)', ylab='f (Hz)', ylim=c(19,33), cex=0.5, yaxt='n', xaxt='n')
 axis(2, at=c(20,25,30))
 axis(1, at=c(4,6.5,9))
 # sex effect is partially due to top area?
 
-plot(f_res ~ jitter(width,2), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='f (Hz)', xlab='width (cm)', ylim=c(19,33), cex=0.5, yaxt='n', xaxt='n')
+plot(f_res ~ jitter(width,2), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='f (Hz)', xlab='width (cm)', ylim=c(19,33), cex=0.5, yaxt='n', xaxt='n')
 axis(2, at=c(20,25,30))
 axis(1, at=c(4,5.5,7))
 
-plot(f_res ~ jitter(height,1), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='f (Hz)', xlab='height (cm)', ylim=c(19,33), cex=0.5, yaxt='n', xaxt='n')
+plot(f_res ~ jitter(height,1), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='f (Hz)', xlab='height (cm)', ylim=c(19,33), cex=0.5, yaxt='n', xaxt='n')
 axis(2, at=c(20,25,30))
 axis(1, at=c(4.5,5.5,6.5))
 
-plot(f_res ~ jitter(nfeathers,1), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='f (Hz)', xlab='# feathers', ylim=c(19,33), cex=0.5, yaxt='n', xaxt='n')
+plot(f_res ~ jitter(nfeathers,1), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='f (Hz)', xlab='# feathers', ylim=c(19,33), cex=0.5, yaxt='n', xaxt='n')
 axis(2, at=c(20,25,30))
 axis(1, at=c(20,25,30))
 
-plot(q ~ jitter(as.numeric(orientation), 0.5), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='Q', xlab='orientation', xaxt='n', xlim=c(0.5,2.5), ylim=c(2,9), cex=0.5, yaxt='n')
+plot(q ~ jitter(as.numeric(orientation), 0.5), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='Q', xlab='orientation', xaxt='n', xlim=c(0.5,2.5), ylim=c(2,9), cex=0.5, yaxt='n')
 axis(1, at=c(1,2), labels=c('standard','sideways'))
 axis(2, at=c(3,6,9))
 segments(x0=0.75,x1=1.25, y0=mean(subset(vib, whole_single=='whole'&orientation=='A_out-plane')$q))
 segments(x0=1.75,x1=2.25, y0=mean(subset(vib, whole_single=='whole'&orientation=='B_in-plane')$q))
 
-plot(q ~ jitter(as.numeric(sex), 0.5), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='Q', xlab='sex', xaxt='n', xlim=c(0.5,2.5), ylim=c(2,9), cex=0.5, yaxt='n')
+plot(q ~ jitter(as.numeric(sex), 0.5), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='Q', xlab='sex', xaxt='n', xlim=c(0.5,2.5), ylim=c(2,9), cex=0.5, yaxt='n')
 axis(1, at=c(1,2), labels=c('female','male'))
 axis(2, at=c(3,6,9))
 segments(x0=0.75,x1=1.25, y0=mean(subset(vib, whole_single=='whole'&sex=='female')$q))
 segments(x0=1.75,x1=2.25, y0=mean(subset(vib, whole_single=='whole'&sex=='male')$q))
 
-plot(q ~ jitter(top_area, 3), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', xlab='top area (cm2)', ylab='Q', ylim=c(2,9), cex=0.5, yaxt='n',xaxt='n')
+plot(q ~ jitter(top_area, 3), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', xlab='top area (cm2)', ylab='Q', ylim=c(2,9), cex=0.5, yaxt='n',xaxt='n')
 axis(2, at=c(3,6,9))
 axis(1, at=c(4,6.5,9))
-plot(q ~ jitter(width,2), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='Q', xlab='width (cm)', ylim=c(2,9), cex=0.5, yaxt='n', xaxt='n')
+plot(q ~ jitter(width,2), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='Q', xlab='width (cm)', ylim=c(2,9), cex=0.5, yaxt='n', xaxt='n')
 axis(2, at=c(3,6,9))
 axis(1, at=c(4,5.5,7))
-plot(q ~ jitter(height,1), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='Q', xlab='height (cm)', ylim=c(2,9), cex=0.5, yaxt='n', xaxt='n')
+plot(q ~ jitter(height,1), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='Q', xlab='height (cm)', ylim=c(2,9), cex=0.5, yaxt='n', xaxt='n')
 axis(2, at=c(3,6,9))
 axis(1, at=c(4.5,5.5,6.5))
-plot(q ~ jitter(nfeathers,1), subset(vib, whole_single=='whole'), pch=16, col=sex_col, bty='l', ylab='Q', xlab='# feathers', ylim=c(2,9), cex=0.5, yaxt='n', xaxt='n')
+plot(q ~ jitter(nfeathers,1), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='Q', xlab='# feathers', ylim=c(2,9), cex=0.5, yaxt='n', xaxt='n')
 axis(2, at=c(3,6,9))
 axis(1, at=c(20,25,30))
 
+dev.off()
+
+png(file='./figures/fig2_legend.png', width=7, height=2, res=300, units='in', bg='white') # legend for crest IDs
+par(mfrow=c(2, 6), bty='l', las=1, par(mar=c(0,0,0,0)), mgp=c(1.5,0.5,0))
+plot.new()
+legend('topleft', legend=lookup$Var1, pch=lookup$pch, bty='n', col=c('green','blue')[c(rep(1,8),rep(2,7))], cex=0.4)
 dev.off()
 
 # plot morphology of dried crests, as compared to measurements on live birds from Dakin (2011)
@@ -181,10 +194,12 @@ morph$sex <- factor(ifelse(morph$color=='blue','b_male','a_female'))
 morph <- group_by(morph, sex)
 morphsumm <- summarize(morph, L=mean(height), L_SE=sd(height)/sqrt(n()), L_lower=L-1.96*L_SE, L_upper=L+1.96*L_SE, W=mean(width), W_SE=sd(width)/sqrt(n()), W_lower=W-1.96*W_SE, W_upper=W+1.96*W_SE)
 
+morph$pch <- lookup$pch[match(morph$crest_number, lookup$Var1)]
+
 png(file='./figures/fig1_morph_compare.png', width=4, height=2, res=300, units='in', bg='white')
 par(mfrow=c(1,2), bty='l', las=1, mar=c(3,3,0.25,0.25), mgp=c(1.5,0.5,0), cex.axis=0.5, cex.lab=0.5, tck=-0.05, cex=0.5)
 plot(c(5.69,5.68) ~ c(1,2), pch=16, ylim=c(3.25,8.25), xlim=c(0.5,2.5), ylab='length (cm)', xaxt='n', xlab='', col=c('green','blue'))
-points(height ~ c(as.numeric(sex)-0.25), pch=1, col=as.numeric(sex)+2, data=morph)
+points(height ~ c(as.numeric(sex)-0.25), pch=pch, col=as.numeric(sex)+2, data=morph)
 axis(1, at=c(1,2), labels=c('female','male'))
 segments(x0=1:2, x1=c(1:2), y0=c(5.63,5.52), y1=c(5.75,5.81))
 segments(x0=c(0.5,1.5), x1=c(1,2), y0=c(mean(subset(morph,sex=='a_female')$height), mean(subset(morph,sex=='b_male')$height)))
@@ -192,7 +207,7 @@ segments(x0=c(0.75,1.75), x1=c(0.75,1.75), y0=c(morphsumm$L_lower), y1=c(morphsu
 segments(x0=c(0.95,1.95), x1=c(1.05,2.05), y0=c(5.69,5.68), y1=c(5.69,5.68))
 segments(x0=0.75, x1=0.75, y0=max(morph$height+0.1), y1=max(morph$height-0.1))
 plot(c(6.62,7.77) ~ c(1,2), pch=16, ylim=c(3.25,8.25), xlim=c(0.5,2.5), ylab='width (cm)', xaxt='n', xlab='', col=c('green','blue'))
-points(width ~ c(as.numeric(sex)-0.25), pch=1, col=as.numeric(sex)+2, data=morph)
+points(width ~ c(as.numeric(sex)-0.25), pch=pch, col=as.numeric(sex)+2, data=morph)
 axis(1, at=c(1,2), labels=c('female','male'))
 segments(x0=1:2, x1=c(1:2), y0=c(6.36,7.43), y1=c(6.98,8.11))
 segments(x0=c(0.5,1.5), x1=c(1,2), y0=c(mean(subset(morph,sex=='a_female')$width), mean(subset(morph,sex=='b_male')$width)))
