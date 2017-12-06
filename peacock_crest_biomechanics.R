@@ -301,26 +301,35 @@ axis(2, at=c(0.002,0.006)); axis(1, at=c(5,9))
 segments(x0=mech$area_cm2, x1=mech$area_cm2, y0=mech$k_Nmm+mech$SE, y1=mech$k_Nmm-mech$SE, col=mech$color)
 dev.off()
 
-mech2 <- read.csv('./data/mechanical_deformation_data.csv')
+mech2 <- read.csv('./data/Crest_static_force_vs_displacement.csv')
 head(mech2)
-range(mech2$displacement_flag_mm)
+range(mech2$displacement_mm)
 range(mech2$force_N)
 mech2$series <- paste('Crest', ifelse(nchar(mech2$crestID)<2, paste('0', mech2$crestID, sep=''), mech2$crestID), mech2$trial_number, sep='_')
 
+R2 <- data.frame(crest=rep(c(8,12,13,1,6,9), 3), trial=rep(1:3, each=6), r2=NA)
+
+
+png(file='./figures/fig7_mech.png', width=6, height=4, res=300, units='in', bg='white')
 par(mfrow=c(2,3), bty='l', las=1, mar=c(3,3,1,0.25), mgp=c(2,0.5,0))
 for(i in c(8,12,13,1,6,9)){
   temp <- subset(mech2, crestID==i)
-  plot(force_N~displacement_flag_mm, subset(temp, trial_number==1), type='n', ylim=c(0,0.063), xlim=c(0,16.5), main=paste('Crest_',i))
-  points(force_N~displacement_flag_mm, subset(temp, trial_number==1), cex=0.5, type='p', col=as.character(color))
-  abline(lm(force_N~displacement_flag_mm, subset(temp, trial_number==1)))
-  points(force_N~displacement_flag_mm, subset(temp, trial_number==2), type='n')
-  abline(lm(force_N~displacement_flag_mm, subset(temp, trial_number==2)))
-  points(force_N~displacement_flag_mm, subset(temp, trial_number==2), cex=0.5, type='p', col=as.character(color))
-  points(force_N~displacement_flag_mm, subset(temp, trial_number==3), type='n')
-  abline(lm(force_N~displacement_flag_mm, subset(temp, trial_number==3)))
-  points(force_N~displacement_flag_mm, subset(temp, trial_number==3), cex=0.5, type='p', col=as.character(color))
+  plot(force_N~displacement_mm, subset(temp, trial_number==1), type='n', ylim=c(0,0.063), xlim=c(0,13.5), main=paste('Crest_',i))
+  
+  points(predict(lm(force_N~0+displacement_mm, subset(temp, trial_number==1))) ~ subset(temp, trial_number==1)$displacement_mm, type='l')
+  R2[R2$crest==i&R2$trial==1,'r2'] <- summary(lm(force_N~0+displacement_mm, subset(temp, trial_number==1)))$adj.r.squared
+  segments(x0=subset(temp, trial_number==1)$displacement_mm, y0=subset(temp, trial_number==1)$force_N-0.001, y1=subset(temp, trial_number==1)$force_N+0.001)
+  points(force_N~displacement_mm, subset(temp, trial_number==1), cex=0.5, type='p', col=as.character(color))
+  points(predict(lm(force_N~0+displacement_mm, subset(temp, trial_number==2))) ~ subset(temp, trial_number==2)$displacement_mm, type='l')
+  R2[R2$crest==i&R2$trial==2,'r2'] <- summary(lm(force_N~0+displacement_mm, subset(temp, trial_number==2)))$adj.r.squared
+  segments(x0=subset(temp, trial_number==2)$displacement_mm, y0=subset(temp, trial_number==2)$force_N-0.001, y1=subset(temp, trial_number==2)$force_N+0.001)
+  points(force_N~displacement_mm, subset(temp, trial_number==2), cex=0.5, type='p', col=as.character(color))
+  points(predict(lm(force_N~0+displacement_mm, subset(temp, trial_number==3))) ~ subset(temp, trial_number==3)$displacement_mm, type='l')
+  R2[R2$crest==i&R2$trial==3,'r2'] <- summary(lm(force_N~0+displacement_mm, subset(temp, trial_number==2)))$adj.r.squared
+  segments(x0=subset(temp, trial_number==3)$displacement_mm, y0=subset(temp, trial_number==3)$force_N-0.001, y1=subset(temp, trial_number==3)$force_N+0.001)
+  points(force_N~displacement_mm, subset(temp, trial_number==3), cex=0.5, type='p', col=as.character(color))
 }
-
+dev.off()
 
 
 
