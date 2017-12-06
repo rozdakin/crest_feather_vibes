@@ -301,4 +301,28 @@ axis(2, at=c(0.002,0.006)); axis(1, at=c(5,9))
 segments(x0=mech$area_cm2, x1=mech$area_cm2, y0=mech$k_Nmm+mech$SE, y1=mech$k_Nmm-mech$SE, col=mech$color)
 dev.off()
 
+mech2 <- read.csv('./data/mechanical_deformation_data.csv')
+head(mech2)
+range(mech2$displacement_flag_mm)
+range(mech2$force_N)
+mech2$series <- paste('Crest', ifelse(nchar(mech2$crestID)<2, paste('0', mech2$crestID, sep=''), mech2$crestID), mech2$trial_number, sep='_')
+
+par(mfrow=c(2,3), bty='l', las=1, mar=c(3,3,1,0.25), mgp=c(2,0.5,0))
+for(i in c(8,12,13,1,6,9)){
+  temp <- subset(mech2, crestID==i)
+  plot(force_N~displacement_flag_mm, subset(temp, trial_number==1), type='n', ylim=c(0,0.063), xlim=c(0,16.5), main=paste('Crest_',i))
+  points(force_N~displacement_flag_mm, subset(temp, trial_number==1), cex=0.5, type='p', col=as.character(color))
+  abline(lm(force_N~displacement_flag_mm, subset(temp, trial_number==1)))
+  points(force_N~displacement_flag_mm, subset(temp, trial_number==2), type='n')
+  abline(lm(force_N~displacement_flag_mm, subset(temp, trial_number==2)))
+  points(force_N~displacement_flag_mm, subset(temp, trial_number==2), cex=0.5, type='p', col=as.character(color))
+  points(force_N~displacement_flag_mm, subset(temp, trial_number==3), type='n')
+  abline(lm(force_N~displacement_flag_mm, subset(temp, trial_number==3)))
+  points(force_N~displacement_flag_mm, subset(temp, trial_number==3), cex=0.5, type='p', col=as.character(color))
+}
+
+
+
+
+
 
