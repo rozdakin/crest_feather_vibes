@@ -125,6 +125,7 @@ axis(2, at=c(20,25,30))
 legend('topright', col=c('green','blue'), pch=16, legend=c('female','male'), bty='n', cex=0.5)
 segments(x0=0.75,x1=1.25, y0=mean(subset(vib, whole_single=='whole'&orientation=='A_out-plane')$f_res))
 segments(x0=1.75,x1=2.25, y0=mean(subset(vib, whole_single=='whole'&orientation=='B_in-plane')$f_res))
+points(f_res ~ jitter(rep(1.5,33), 1.5), subset(vib, whole_single=='singl')[,c('f_res','orientation','sex_col','pch')], cex=0.5, pch=pch, col=sex_col)
 
 plot(f_res ~ jitter(as.numeric(sex), 0.5), subset(vib, whole_single=='whole'), pch=pch, col=sex_col, bty='l', ylab='f (Hz)', xlab='sex', xaxt='n', xlim=c(0.5,2.5), ylim=c(19,33), cex=0.5, yaxt='n')
 axis(1, at=c(1,2), labels=c('female','male'))
