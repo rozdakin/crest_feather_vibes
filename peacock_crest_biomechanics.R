@@ -71,8 +71,20 @@ r.squaredGLMM(mod.q1) # 49% var explained in Q by fixed effects, fairly high
 vcomp <- as.numeric(VarCorr(mod.q1)[,1])
 vcomp[1]/(vcomp[1]+vcomp[2]) # 47% measurement repeatability
 
+mylower <- function(x){
+  subx <- x[!is.na(x)]
+  myse <- sd(subx)/sqrt(length(subx))
+  lower <- mean(subx) - 1.96*myse
+  return(lower)
+}
+myupper <- function(x){
+  subx <- x[!is.na(x)]
+  myse <- sd(subx)/sqrt(length(subx))
+  upper <- mean(subx) + 1.96*myse
+  return(upper)
+}
 vib <- group_by(vib, crest_number, sex_col, orientation)
-summarize(group_by(summarize(subset(vib, whole_single=='whole'), q=mean(q)), sex_col, orientation), mean(q))
+summarize(group_by(summarize(subset(vib, whole_single=='whole'), q=mean(q)), sex_col, orientation), mean(q), mylower(q), myupper(q))
 range(summarize(group_by(subset(vib, whole_single=='singl'), feather_ID), f_res=mean(f_res))$f_res)
 
 # resonant freq.
