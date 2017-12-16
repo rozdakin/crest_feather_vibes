@@ -73,6 +73,7 @@ vcomp[1]/(vcomp[1]+vcomp[2]) # 47% measurement repeatability
 
 vib <- group_by(vib, crest_number, sex_col, orientation)
 summarize(group_by(summarize(subset(vib, whole_single=='whole'), q=mean(q)), sex_col, orientation), mean(q))
+range(summarize(group_by(subset(vib, whole_single=='singl'), feather_ID), f_res=mean(f_res))$f_res)
 
 # resonant freq.
 mod.f <- lme(f_res ~ orientation + sex + sweep + run, random=~1|crest_number, data=subset(vib, whole_single=='whole'), na.action=na.omit)
@@ -284,23 +285,9 @@ mechmod <- lme(k_Nmm ~ sex, random=~1|crestID, data=mech)
 summary(mechmod)
 as.numeric(VarCorr(mechmod)[,1])[1]/(as.numeric(VarCorr(mechmod)[,1])[1] + as.numeric(VarCorr(mechmod)[,1])[2])
 
-png(file='./figures/fig6_mech.png', width=6, height=6, res=300, units='in', bg='white')
-par(mar=c(4,4,0.25,0.25), bty='l', las=1, mgp=c(2.5,0.5,0))
-layout(matrix(c(1,2,1,3,1,4), nrow=3, ncol=2, byrow=T))
-plot(k_Nmm ~ jitt, data=mech, col=color, pch=pch, xlim=c(0.5,2.5), xaxt='n', xlab='Sex', cex=1.25, ylim=c(0.0015, 0.007))
-segments(x0=c(0.75,1.75), x1=c(1.25,2.25), y0=mechsumm$k, lwd=2)
-axis(1, at=1:2, labels=c('Female','Male'))
-segments(x0=c(mech$jitt), x1=c(mech$jitt), y0=c(mech$k_Nmm+mech$SE), y1=c(mech$k_Nmm-mech$SE), col=mech$color)
-plot(k_Nmm ~ rachis_length_cm, mech, col=color, pch=pch, ylab='', yaxt='n', xaxt='n', cex=0.75, ylim=c(0.0015, 0.007))
-axis(2, at=c(0.002,0.006)); axis(1, at=c(4.2,5.4))
-segments(x0=mech$rachis_length_cm, x1=mech$rachis_length_cm, y0=mech$k_Nmm+mech$SE, y1=mech$k_Nmm-mech$SE, col=mech$color)
-plot(k_Nmm ~ number_feathers, mech, col=color, pch=pch, ylab='', yaxt='n', xaxt='n', cex=0.75, ylim=c(0.0015, 0.007))
-axis(2, at=c(0.002,0.006)); axis(1, at=c(20,28))
-segments(x0=mech$number_feathers, x1=mech$number_feathers, y0=mech$k_Nmm+mech$SE, y1=mech$k_Nmm-mech$SE, col=mech$color)
-plot(k_Nmm ~ area_cm2, mech, col=color, pch=pch, ylab='', yaxt='n', xaxt='n', cex=0.75, ylim=c(0.0015, 0.007))
-axis(2, at=c(0.002,0.006)); axis(1, at=c(5,9))
-segments(x0=mech$area_cm2, x1=mech$area_cm2, y0=mech$k_Nmm+mech$SE, y1=mech$k_Nmm-mech$SE, col=mech$color)
-dev.off()
+mech$crestID <- ifelse(nchar(mech$crestID)<2, paste('crest_0', mech$crestID, sep=''), paste('crest_',mech$crestID, sep=''))
+mech$pch <- vib$pch[match(mech$crestID, vib$crest_number)]
+mech$crestID <- factor(mech$crestID)
 
 mech2 <- read.csv('./data/Crest_static_force_vs_displacement.csv')
 head(mech2)
@@ -308,28 +295,18 @@ range(mech2$displacement_mm)
 range(mech2$force_N)
 mech2$series <- paste('Crest', ifelse(nchar(mech2$crestID)<2, paste('0', mech2$crestID, sep=''), mech2$crestID), mech2$trial_number, sep='_')
 
-R2 <- data.frame(crest=rep(c(8,12,13,1,6,9), 3), trial=rep(1:3, each=6), r2=NA)
-
-
-png(file='./figures/fig7_mech.png', width=6, height=4, res=300, units='in', bg='white')
-par(mfrow=c(2,3), bty='l', las=1, mar=c(3,3,1,0.25), mgp=c(2,0.5,0))
-for(i in c(8,12,13,1,6,9)){
-  temp <- subset(mech2, crestID==i)
-  plot(force_N~displacement_mm, subset(temp, trial_number==1), type='n', ylim=c(0,0.063), xlim=c(0,13.5), main=paste('Crest_',i))
-  
-  points(predict(lm(force_N~0+displacement_mm, subset(temp, trial_number==1))) ~ subset(temp, trial_number==1)$displacement_mm, type='l')
-  R2[R2$crest==i&R2$trial==1,'r2'] <- summary(lm(force_N~0+displacement_mm, subset(temp, trial_number==1)))$adj.r.squared
-  segments(x0=subset(temp, trial_number==1)$displacement_mm, y0=subset(temp, trial_number==1)$force_N-0.001, y1=subset(temp, trial_number==1)$force_N+0.001)
-  points(force_N~displacement_mm, subset(temp, trial_number==1), cex=0.5, type='p', col=as.character(color))
-  points(predict(lm(force_N~0+displacement_mm, subset(temp, trial_number==2))) ~ subset(temp, trial_number==2)$displacement_mm, type='l')
-  R2[R2$crest==i&R2$trial==2,'r2'] <- summary(lm(force_N~0+displacement_mm, subset(temp, trial_number==2)))$adj.r.squared
-  segments(x0=subset(temp, trial_number==2)$displacement_mm, y0=subset(temp, trial_number==2)$force_N-0.001, y1=subset(temp, trial_number==2)$force_N+0.001)
-  points(force_N~displacement_mm, subset(temp, trial_number==2), cex=0.5, type='p', col=as.character(color))
-  points(predict(lm(force_N~0+displacement_mm, subset(temp, trial_number==3))) ~ subset(temp, trial_number==3)$displacement_mm, type='l')
-  R2[R2$crest==i&R2$trial==3,'r2'] <- summary(lm(force_N~0+displacement_mm, subset(temp, trial_number==2)))$adj.r.squared
-  segments(x0=subset(temp, trial_number==3)$displacement_mm, y0=subset(temp, trial_number==3)$force_N-0.001, y1=subset(temp, trial_number==3)$force_N+0.001)
-  points(force_N~displacement_mm, subset(temp, trial_number==3), cex=0.5, type='p', col=as.character(color))
-}
+png(file='./figures/fig6_mech.png', width=6, height=3, res=300, units='in', bg='white')
+par(mar=c(4,4,0.25,0.25), mfrow=c(1,2), bty='l', las=1, mgp=c(2.5,0.5,0))
+i=9
+temp <- subset(mech2, crestID==i)
+plot(force_N~displacement_mm, subset(temp, trial_number==1), type='n', ylim=c(0,0.063), xlim=c(0,13.5), main=paste('Crest_',i))
+points(predict(lm(force_N~0+displacement_mm, subset(temp, trial_number==1))) ~ subset(temp, trial_number==1)$displacement_mm, type='l')
+segments(x0=subset(temp, trial_number==1)$displacement_mm, y0=subset(temp, trial_number==1)$force_N-0.001, y1=subset(temp, trial_number==1)$force_N+0.001)
+points(force_N~displacement_mm, subset(temp, trial_number==1), cex=1, type='p', col=as.character(color), pch=7)
+plot(k_Nmm ~ as.numeric(crestID), data=mech, col=color, pch=pch, xlim=c(0.5,6.5), xaxt='n', xlab='Crest ID', cex=1, ylim=c(0.0015, 0.007))
+# segments(x0=c(0.75,1.75), x1=c(1.25,2.25), y0=mechsumm$k, lwd=2)
+# axis(1, at=1:2, labels=c('Female','Male'))
+segments(x0=as.numeric(mech$crestID), y0=c(mech$k_Nmm+mech$SE), y1=c(mech$k_Nmm-mech$SE), col=mech$color)
 dev.off()
 
 
