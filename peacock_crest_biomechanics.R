@@ -1,5 +1,5 @@
 
-# last edited 12-05-17
+# last edited 02-18-18
 
 # load packages
 library(nlme) # 1.1-12
@@ -242,16 +242,16 @@ text(x=spec[spec$fit==max(spec$fit),]$freq, y=spec[spec$fit==max(spec$fit),]$fit
 dev.off()
 
 # plot example audio results
-audio <- read.csv('data/Audio_file_sample_data_-_Sheet1.csv')[,1:2] # crest 13, 25Hz, 30 cm distance
-names(audio) <- c('freq','power')
-audiofit <- read.csv('data/Audio_file_sample_data_-_Sheet1.csv')[,4:5] # fit
-names(audiofit) <- c('freq','fit')
+audio <- read.csv('data/audio_experiment_exmple_data.csv') # crest 08
+names(audio)[1:2] <- c('freq','power')
+audio$trial <- paste(audio$playback_track, audio$blocked, sep='_')
 
 png(file='./figures/fig3_audio_result.png', width=4, height=4, res=300, units='in', bg='white')
 par(bty='l', las=1, mgp=c(3,0.5,0))
-plot(power ~ freq, data=audio, type='l', ylab='Power as MSA (mm2)', xlab='Frequency (Hz)', lty=3, xlim=c(0,110))
-points(fit ~ freq, data=audiofit, type='l')
-legend('topright', lty=c(3,1), legend=c('data','L. fit'), bty='n', cex=0.75)
+plot(power ~ freq, data=subset(audio, trial=='file_1006_no'), type='l', ylab='Power as MSA (mm2)', xlab='Frequency (Hz)', lty=3, lwd=1.2, xlim=c(0,110))
+points(power ~ freq, data=subset(audio, trial=='file_1006_yes'), type='l', lty=2, lwd=1.6, col='red')
+points(power ~ freq, data=subset(audio, trial=='white_noise_no'), type='l', lty=1)
+legend('topright', lty=c(3,2,1), lwd=c(1.2,1.6,1), legend=c('data','blocked','white noise'), bty='n', col=c(1,2,1), cex=0.75)
 dev.off()
 
 # plot wingflap experiment resuls
