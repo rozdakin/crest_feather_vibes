@@ -1,5 +1,5 @@
 
-# last edited 02-18-18
+# last edited 06-25-18
 
 # load packages
 library(nlme) # 1.1-12
@@ -321,7 +321,20 @@ plot(k_Nmm ~ as.numeric(crestID), data=mech, col=color, pch=pch, xlim=c(0.5,6.5)
 segments(x0=as.numeric(mech$crestID), y0=c(mech$k_Nmm+mech$SE), y1=c(mech$k_Nmm-mech$SE), col=mech$color)
 dev.off()
 
+# plot vibration of other feather results
+feath <- read.csv('./data/other_feather_resonance.csv')
+feath$plot.color <- c('pink','light blue','orange','green','blue')[as.numeric(feath$species)]
+feath$plot.symbol <- c(16,15,6,10,18)[as.numeric(feath$type)]
 
-
-
+png(file='./figures/other_sp_figure.png', width=3, height=3, res=300, units='in', bg='white')
+par(mar=c(4,4,0.25,0.25), bty='l', las=1, mgp=c(2.5,0.5,0))
+plot(f1_Hz ~ rachis_length_cm, data=feath, ylab='Fundamental frequency (Hz)', xlab='Rachis length (cm)', xaxt='n', yaxt='n', col=feath$plot.color, pch=feath$plot.symbol)
+segments(x0=feath$rachis_length_cm, y0=c(feath$f1_Hz+feath$SE_f1_Hz), y1=c(feath$f1_Hz-feath$SE_f1_Hz), col=1)
+axis(1, at=c(4, 8, 12))
+axis(2, at=c(10,20,30,40))
+points(c(28.05, 26.3) ~ c(5.3, 5.4), pch=16, col='blue')
+segments(x0=c(5.3, 5.4), y0=c(28.0, 25.9), y1=c(28.1, 26.6))
+mylegend <- unique(cbind(paste(feath$species, feath$type), feath$plot.color, feath$plot.symbol))
+legend('topright', bty='n', legend=mylegend[,1], pch=as.numeric(mylegend[,3]), col=mylegend[,2], cex=0.4)
+dev.off()
 
