@@ -1,0 +1,12 @@
+sample_ID,feather_type,rachis_length_cm,outer_length_cm,uncertainty_cm,f1_Hz,SE_f1_Hz
+TP1,tippet/mantle,5.15,5.37,0.04,36.7,0.7
+TP3,tippet/mantle,7.00,7.30,0.04,28.1,0.1
+BP1,peacock neck body contour semiplume,3.94,5.77,0.04,39.8,0.6
+BP2,peacock neck body contour semiplume,5.95,7.32,0.04,30.8,0.2
+BP3,peacock wing convert,10.67,10.67,0.04,25.9,0.1
+ES1,eyespot,11.50,15.46,0.04,16.1,1.2
+CP1,crowed pigeon,6.30,6.30,0.05,19.1,0.2
+CP3,crowed pigeon,12.50,12.50,0.05,5.3,0.0
+HM,Himalyan monal,5.50,5.50,0.05,7.0,0.1
+CT,yellow-crested cockatoo,10.00,10.00,0.05,17.2,0.1
+GP,Golden pheasant,5.00,5.00,0.05,13.7,0.0
