@@ -1,5 +1,5 @@
 
-# last edited 06-25-18
+# last edited 06-04-18
 
 # load packages
 library(nlme) # 1.1-12
@@ -111,7 +111,7 @@ r.squaredGLMM(mod.f1) # 28% var explained in f res. by fixed effects
 vcomp <- as.numeric(VarCorr(mod.f1)[,1])
 vcomp[1]/(vcomp[1]+vcomp[2]) # 94% repeatability, very high
 
-# plot data and some model fits for both fr and Q, for Figure 2 of manuscript
+# plot data and some model fits for both fr and Q, for Figure 3 of manuscript
 # add:
 # male mean display freq = 25.6, range of bird means 23.9-27.1; range 22.2 to 28.2
 # female mean display freq = 26.1, range of bird means 25.2-27.1; range 25.2 to 28.5
@@ -128,7 +128,7 @@ lookup <- lookup[lookup$Freq>0,-3]
 lookup$pch <- c(1:8,1:7)
 vib$pch <- lookup$pch[match(vib$crest_number, lookup$Var1)]
 
-png(file='./figures/fig2_vib_results.png', width=7, height=2, res=300, units='in', bg='white')
+png(file='./figures/fig3_vib_results.png', width=7, height=2, res=300, units='in', bg='white')
 
 par(mfrow=c(2, 6), bty='l', las=1, mar=c(3,3,0.25,0.25), mgp=c(1.5,0.5,0), cex.axis=0.5, cex.lab=0.5, tck=-0.05)
 
@@ -194,7 +194,7 @@ axis(1, at=c(20,25,30))
 
 dev.off()
 
-png(file='./figures/fig2_legend.png', width=7, height=2, res=300, units='in', bg='white') # legend for crest IDs
+png(file='./figures/fig3_legend.png', width=7, height=2, res=300, units='in', bg='white') # legend for crest IDs
 par(mfrow=c(2, 6), bty='l', las=1, par(mar=c(0,0,0,0)), mgp=c(1.5,0.5,0))
 plot.new()
 legend('topleft', legend=lookup$Var1, pch=lookup$pch, bty='n', col=c('green','blue')[c(rep(1,8),rep(2,7))], cex=0.4)
@@ -210,7 +210,7 @@ morphsumm <- summarize(morph, L=mean(height), L_SE=sd(height)/sqrt(n()), L_lower
 
 morph$pch <- lookup$pch[match(morph$crest_number, lookup$Var1)]
 
-png(file='./figures/fig1_morph_compare.png', width=4, height=2, res=300, units='in', bg='white')
+png(file='./figures/fig2_morph_compare.png', width=4, height=2, res=300, units='in', bg='white')
 par(mfrow=c(1,2), bty='l', las=1, mar=c(3,3,0.25,0.25), mgp=c(1.5,0.5,0), cex.axis=0.5, cex.lab=0.5, tck=-0.05, cex=0.5)
 plot(c(5.69,5.68) ~ c(1,2), pch=16, ylim=c(3.25,8.25), xlim=c(0.5,2.5), ylab='length (cm)', xaxt='n', xlab='', col=c('green','blue'))
 points(height ~ c(as.numeric(sex)-0.25), pch=pch, col=as.numeric(sex)+2, data=morph)
@@ -233,7 +233,7 @@ dev.off()
 spec <- read.csv('data/Crest_transfer_function_plot_-_Sheet1.csv')[,1:3] # crest 1
 names(spec) <- c('freq', 'transferfcn', 'fit')
 
-png(file='./figures/fig2_sample_spectrum.png', width=4, height=4, res=300, units='in', bg='white')
+png(file='./figures/fig3_sample_spectrum.png', width=4, height=4, res=300, units='in', bg='white')
 par(bty='l', las=1)
 plot(transferfcn ~ freq, spec, type='l', xlab='Frequency (Hz)', ylab='Transfer function (arb. units)', lty=3, ylim=c(0,8))
 points(fit ~ freq, spec, type='l')
@@ -246,7 +246,7 @@ audio <- read.csv('data/audio_experiment_exmple_data.csv') # crest 08
 names(audio)[1:2] <- c('freq','power')
 audio$trial <- paste(audio$playback_track, audio$blocked, sep='_')
 
-png(file='./figures/fig3_audio_result.png', width=4, height=4, res=300, units='in', bg='white')
+png(file='./figures/fig5_audio_result.png', width=4, height=4, res=300, units='in', bg='white')
 par(bty='l', las=1, mgp=c(3,0.5,0))
 plot(power ~ freq, data=subset(audio, trial=='file_1006_no'), type='l', ylab='Power as MSA (mm2)', xlab='Frequency (Hz)', lty=3, lwd=1.2, xlim=c(0,110))
 points(power ~ freq, data=subset(audio, trial=='file_1006_yes'), type='l', lty=2, lwd=1.6, col='red')
@@ -258,7 +258,7 @@ dev.off()
 flap <- read.csv('data/wingflap_power_spectrum.csv')
 head(flap)
 
-png(file='./figures/fig4_wingflap_result.png', width=4, height=4, res=300, units='in', bg='white')
+png(file='./figures/fig6_wingflap_result.png', width=4, height=4, res=300, units='in', bg='white')
 par(mfrow=c(1,1), bty='l', las=1, mgp=c(3,0.5,0))
 plot(FFTpower ~ frequency, type='l', flap, xlim=c(0,30), yaxt='n', ylim=c(0,0.000002), xlab='Frequency (Hz)', ylab='FFT spectral power (arb. units)')
 axis(2, at=c(0,0.000001,0.000002))
@@ -271,7 +271,7 @@ vortexfit <- read.csv('data/Vortex_response_figure_-_Sheet1.csv')[,4:5]
 names(vortexfit) <- c('t','fit')
 vortexall <- read.csv('data/vortex_results_natural_frequency.csv')
 
-png(file='./figures/fig5_vortex.png', width=8, height=4, res=300, units='in', bg='white')
+png(file='./figures/fig4_vortex.png', width=8, height=4, res=300, units='in', bg='white')
 par(mfrow=c(1,2), mar=c(4,4,0.25,0.25), bty='l', las=1, mgp=c(2.5,0.5,0))
 plot(disp ~ t, data=vortex, type='l', ylab='Displacement (mm)', xlab='Time (s)', lty=3)
 points(fit/5.9 ~ t, data=vortexfit, type='l')
@@ -307,7 +307,7 @@ range(mech2$displacement_mm)
 range(mech2$force_N)
 mech2$series <- paste('Crest', ifelse(nchar(mech2$crestID)<2, paste('0', mech2$crestID, sep=''), mech2$crestID), mech2$trial_number, sep='_')
 
-png(file='./figures/fig6_mech.png', width=6, height=3, res=300, units='in', bg='white')
+png(file='./figures/fig_s4_mech.png', width=6, height=3, res=300, units='in', bg='white')
 par(mar=c(4,4,0.25,0.25), mfrow=c(1,2), bty='l', las=1, mgp=c(2.5,0.5,0))
 i=9
 temp <- subset(mech2, crestID==i)
